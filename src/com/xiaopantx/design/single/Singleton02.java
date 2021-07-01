@@ -20,4 +20,8 @@ public class Singleton02 {
     public static Singleton02 getInstance() {
         return INSTANCE;
     }
+
+    public static void main(String[] args) {
+        System.out.println(Singleton02.getInstance().hashCode() == Singleton02.getInstance().hashCode());
+    }
 }

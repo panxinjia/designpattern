@@ -1,12 +1,13 @@
 package com.xiaopantx.design.single;
 
 /**
- * 单例设计模式 - 懒汉式写法
+ * 单例设计模式 - 饿汉式写法
  * @author xiaopantx
  *
- * 工作中常用: 直接使用懒汉式写法, class一加载完成static初始化,实例就创建了
+ * 应用: 直接使用饿汉式写法, 字节码一加载完成，static初始化,实例就创建了， 工作中通常是使用Spring框架，
+ *  在启动时就完成初始化了。
  *
- * 问题:
+ * 问题: 实例对象过大时可能会影响启动速度。
  */
 public class Singleton01 {
 
@@ -30,7 +31,7 @@ public class Singleton01 {
 
         // 同一个实例
         System.out.println(instance01 == instance02);
-        // hashcode 相同
+        // 同一个类的实例， 每一个实例的hashCode唯一
         System.out.println(instance01.hashCode() == instance02.hashCode());
     }
 }
