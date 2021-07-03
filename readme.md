@@ -318,7 +318,35 @@ public static void main(String[] args) {
 
 ![1625299888820](img/1625299888820.png)
 
+```java
+public static void main(String[] args) {
+        final Moveable car = new Car();
+        // 保留在内存中生成的代理类
+        System.getProperties().put("jdk.proxy.ProxyGenerator.saveGeneratedFiles", "true");
 
+        Moveable proxy = ((Moveable) Proxy.newProxyInstance(
+                car.getClass().getClassLoader(), // 代理类 与 被代理类使用相同的类加载器加载
+                car.getClass().getInterfaces(),  // jdk 动态代理基于接口实现
+                new InvocationHandler() { // 被代理类的方法调动处理 ☆
+                    /**
+                     *
+                     * @param proxy 代理类， 慎用， stack over flow
+                     * @param method 调用方法
+                     * @param args 方法参数
+                     * @return
+                     * @throws Throwable
+                     */
+                    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+                        System.out.println("before............");
+                        Object retVal = method.invoke(car, args);
+                        System.out.println("after............");
+                        return retVal;
+                    }
+                }
+        ));
+        proxy.move();
+    }
+```
 
 
 
@@ -336,9 +364,26 @@ public static void main(String[] args) {
 </dependency>
 ```
 
+```java
+public static void main(String[] args) {
+        //增强器
+        Enhancer enhancer = new Enhancer();
+        enhancer.setSuperclass(Car.class);
+        enhancer.setCallback(new MethodInterceptor() {
+            @Override
+            public Object intercept(Object o, Method method,
+                                    Object[] objects, MethodProxy methodProxy) throws Throwable {
+                System.out.println("before...");
+                Object retVal = methodProxy.invokeSuper(o, objects);
+                System.out.println("after...");
+                return retVal;
+            }
+        });
 
-
-
+        Car c = ((Car) enhancer.create());
+        c.move();
+    }
+```
 
 
 
