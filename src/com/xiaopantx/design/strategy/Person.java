@@ -1,4 +1,4 @@
-package com.xiaopantx.strategy;
+package com.xiaopantx.design.strategy;
 
 /**
  * @author panxj

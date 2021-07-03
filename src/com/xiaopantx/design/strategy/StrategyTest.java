@@ -1,4 +1,4 @@
-package com.xiaopantx.strategy;
+package com.xiaopantx.design.strategy;
 
 import java.util.Arrays;
 import java.util.Comparator;

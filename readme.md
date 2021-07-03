@@ -2,6 +2,16 @@
 
 ​		总结一下设计模式， 虽然在工作中用到设计模式的机会不是很多， 但框架设计中有很多灵活的设计模式应用， 理解常见设计模式对于框架学习和源码阅读非常重要。 
 
+​		**设计模式是对面向对象编程思想的灵活运用，  抽象， 模板，复用， 多态。 整体分为三类， 分别处理如何创建对象， 如何组织类， 如何处理对象行为。**
+
+1. 创建型模式：如何创建对象
+2. 结构型模式：如何组织对象
+3. 行为型模式：处理对象行为
+
+# 设计原则
+
+
+
 # singleton 单例模式 
 
 ​	工作中如果需要使用到单例设计模式， 可以直接使用饿汉式或者静态内部类的写法， 没必要追求奇技淫巧， 工程学科以工程为主。
@@ -231,27 +241,185 @@ System.out.println(s3.intern() == s4.intern()); // true
 
 # Factory 工厂模式
 
+​		任何可以产生对象的方法或者类， 都可以称为工厂， 1. 灵活控制生产过程 2. 权限，修饰，日志。
+
+​		形容词的定义用接口， 名词的定义用抽象类。**在业务逻辑代码中，剥离对于具体对象的依赖关系。**
+
+​		任意定制交通工具  -  抽象类、接口
+
+- 简单工厂，静态工厂， 工厂方法：**任意定义产品过程 - 简单工厂 、 静态工厂、Builder模式配合**
+- 抽象工厂：任意定制产品族 - 一系列 composite 对象的组合生产 
+- SpringIOC：Spring框架核心原理 
+
+## 简单工厂
+
+![1625293950289](img/1625293950289.png)
+
+## 抽象工厂
+
+![1625294815552](img/1625294815552.png)
+
+
+
 
 
 # Proxy 代理模式 ☆ 
 
-- 静态代理
-- 动态代理
-- SpringAOP
+​		不改变原有代码的前提下，灵活控制一个或多个或部分（指定一批类）的行为， 可以通过代理模式实现，工程项目中使用静态代理还是动态代理，根据业务实际情况定义（根据对项目的理解）。proxy模式非常重要， **必须要数量掌握的设计模式之一**。
+
+​		理解代理模式的常用例子： **计算程序运行时间**。 
+
+​		benchmark 基线测试： 性能测试。 
+
+Privilege， Transaction 
+
+- 静态代理： 和decoration 装饰模式很像。 多态抽象，多层代理， 代理类是具体的直接声明的。
+- 动态代理： 静态代理的基础上增强， 代理类是运行过程中动态生成的。
+  - JDK `java.lang.reflect`包中 Proxy实现
+  - cglib 扩展扩展实现。 
+- SpringAOP： 切点表达式 （模式匹配 ） + 动态搭理 
+
+## 静态搭理
+
+​		简单的对对象进行增强， 聚合（aggregation）方式实现， 面向接口， 功能性设计模式一种，类似于装饰器模式。面向接口， 可以嵌套。 
+
+![1625310034108](img/1625310034108.png)
+
+![1625310108838](img/1625310108838.png)
+
+```java
+public static void main(String[] args) {
+        // target 被代理类
+        Moveable target = new Car();
+
+        // 代理类  代理类与被代理类实现共同接口
+        Moveable proxy = new MoveTimeProxy(
+                new MoveLogProxy(
+                        target
+                )
+        );
+        proxy.move();
+    }
+```
+
+## 动态代理 ☆ 
+
+### jdk动态代理 
+
+​	jdk 动态代理必须**面向接口**，这是 Proxy内部决定的。 基于接口在内存中生成代理。
+
+![1625310323063](img/1625310323063.png)
+
+#### 执行过程
+
+​		**依赖ASM （字节码操作类库）**， 在内存中创建代理类， 使用ASM之后Java才有一定的动态语言特性 。 
+
+​		**动态语言：**执行过程中， 动态修改字节码内容。 反射只能读取一些字节码信息，但是没有能力修改字节码内容。
+
+![1625299888820](img/1625299888820.png)
 
 
+
+
+
+### cglib 动态代理
+
+​		code generator lib 字节码生成库。 相比 jdk 反射生成代理类， 更简单。 依赖外部类库。cglib 是基于**被代理类**生成一个**子类**。 
+
+```xml
+<!-- https://mvnrepository.com/artifact/cglib/cglib -->
+<!-- cglib 类库 -->
+<dependency>
+    <groupId>cglib</groupId>
+    <artifactId>cglib</artifactId>
+    <version>3.3.0</version>
+</dependency>
+```
+
+
+
+
+
+
+
+### instrument 动态字节码
+
+在class文件加载过程中， 可以拦截字节码，动态操作， 使用比较少见， jdk自带。 
+
+
+
+## SpringAOP
+
+​		IOC + AOP， bean工厂 + 灵活配置 + 动态行为拼接（织入）  => Spring在Java框架中一哥的地位。 
 
 # Iterator 迭代器模式
 
+​		容器和容器遍历。 
 
 
-# Builder 构建器模式
+
+# Builder 建造模式
+
+​	**构建复杂对象**， 创建型模式， 处理构造对象的过程，构造对象的**参数较多且需要自由组合时**，可以使用 Builder模式， 屏蔽创建对象的复杂度 。 
+
+- 分离复杂对象的构建和表示。 
+- 同样的构建过程可以创建不同的表示。
+- 无须记忆， 自然使用。 
+- SpringSecurity 权限扩展点。 
+
+![1625307408758](img/1625307408758.png)
+
+```java
+public class Person {
+
+    private String name;
+    private int age;
+    private Location loc;
+
+    //构建器经常作为内部类存在
+    public static class PersonBuilder{
+        // 构建目标对象
+        private Person person;
+        // 链式API
+        public PersonBuilder name(String name) {
+            person.name = name;
+            return this;
+        }
+        public PersonBuilder age(int age) {
+            person.age = age;
+            return this;
+        }
+
+        public PersonBuilder loc(Location loc) {
+            person.loc = loc;
+            return this;
+        }
+        // 返回目标对象
+        public Person build() {
+            return person;
+        }
+    }
+
+}
+```
 
 
 
 # Adaptor 适配器模式
 
+​		接口转换器。 wrapper，包装器， 主要用于统一类的访问方式。
 
+**注意事项：** jdk， 框架源码 中经常见到 xxxAdaptor的类， 这些类不是适配器模式， 例如 `WindowAdaptor，KeyAdaptor` 只是一种方便的编程方式， 将多功能接口进行默认的空实现， 子类针对扩展点做具体实现。 
+
+- 电压转接
+- java.io： 转换流
+- jdbc-odbc bridge： 微软 SQLServer 一般都是通过 odbc进行访问， 适配模式转换为 jdbc 访问接口， client 直接访问 jdbc 接口。 
+- ASM transformer
+- sl4j (门面) ， log4j，log4j2，logback
+
+![1625309102439](img/1625309102439.png)
+
+![1625309261154](img/1625309261154.png)
 
 # ChainOfResponsibility 责任链模式
 
