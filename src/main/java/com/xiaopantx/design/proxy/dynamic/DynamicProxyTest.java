@@ -32,6 +32,7 @@ public class DynamicProxyTest {
                      * @return
                      * @throws Throwable
                      */
+                    @Override
                     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
                         System.out.println("before............");
                         Object retVal = method.invoke(car, args);
